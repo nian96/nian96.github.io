@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Hexo</title>
-  
-  
+  <title>Jilin&#39;s Blog</title>
+  <icon>https://www.gravatar.com/avatar/fc5197b8ed177f598f90ba73605a6e68</icon>
+  <subtitle>Test0</subtitle>
   <link href="https://nian96.github.io/atom.xml" rel="self"/>
   
   <link href="https://nian96.github.io/"/>
@@ -10,8 +10,8 @@
   <id>https://nian96.github.io/</id>
   
   <author>
-    <name>John Doe</name>
-    
+    <name>Jilin Zhang</name>
+    <email>zhang-jl19@mails.tsinghua.edu.cn</email>
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
