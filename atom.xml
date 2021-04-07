@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Jilin&#39;s Blog</title>
+  <title>吉霖的博客</title>
   <icon>https://www.gravatar.com/avatar/fc5197b8ed177f598f90ba73605a6e68</icon>
-  <subtitle>Test0</subtitle>
+  <subtitle>知识保存</subtitle>
   <link href="https://nian96.github.io/atom.xml" rel="self"/>
   
   <link href="https://nian96.github.io/"/>
-  <updated>2021-04-07T11:41:41.501Z</updated>
+  <updated>2021-04-07T11:42:39.532Z</updated>
   <id>https://nian96.github.io/</id>
   
   <author>
-    <name>Jilin Zhang</name>
+    <name>张吉霖</name>
     <email>zhang-jl19@mails.tsinghua.edu.cn</email>
   </author>
   
@@ -21,10 +21,12 @@
     <link href="https://nian96.github.io/2021/04/07/VCS%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
     <id>https://nian96.github.io/2021/04/07/VCS%E7%9A%84%E4%BD%BF%E7%94%A8/</id>
     <published>2021-04-07T11:34:32.000Z</published>
-    <updated>2021-04-07T11:41:41.501Z</updated>
+    <updated>2021-04-07T11:42:39.532Z</updated>
     
     
     
+    
+    <category term="工具使用" scheme="https://nian96.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/"/>
     
     
     <category term="VCS" scheme="https://nian96.github.io/tags/VCS/"/>
