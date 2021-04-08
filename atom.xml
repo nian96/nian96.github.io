@@ -6,7 +6,7 @@
   <link href="https://nian96.github.io/atom.xml" rel="self"/>
   
   <link href="https://nian96.github.io/"/>
-  <updated>2021-04-08T02:31:06.765Z</updated>
+  <updated>2021-04-08T02:49:25.481Z</updated>
   <id>https://nian96.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://nian96.github.io/2021/04/07/VCS%E2%80%94Verdi%E8%81%94%E5%90%88%E4%BB%BF%E7%9C%9F/"/>
     <id>https://nian96.github.io/2021/04/07/VCS%E2%80%94Verdi%E8%81%94%E5%90%88%E4%BB%BF%E7%9C%9F/</id>
     <published>2021-04-07T11:34:32.000Z</published>
-    <updated>2021-04-08T02:31:06.765Z</updated>
+    <updated>2021-04-08T02:49:25.481Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="一、VCS与Verdi简介"><a href="#一、VCS与Verdi简介" class="headerlink" title="一、VCS与Verdi简介"></a>一、VCS与Verdi简介</h1><p>VCS的全称为Verilog Complie Simulator，是Synopsys公司的电路仿真工具，可用来对电路进行编译与仿真，仿真得到的fsdb文件可被Verdi打开，用于查看仿真得到的波形文件。</p><p>VCS-Verdi联合仿真的优势主要有两点。首先是VCS编译以及仿真电路的速度要远远快于Modelsim等仿真工具，在进行后仿真时可以节省大量时间。其次是VCS仿真得到的fsdb中可以包括电路中所有信号的变化，这样就可以避免在Modelsim中常遇到的重复抓取信号仿真的情况。</p><h1 id="二、VCS的使用流程"><a href="#二、VCS的使用流程" class="headerlink" title="二、VCS的使用流程"></a>二、VCS的使用流程</h1><img src="E:\blog_file\blog_img\VCS-Verdi\VCS工作流程.png" alt="VCS工作流程" style="zoom:80%;" /><p>VCS的工作流程如图1所示。</p><ol><li>准备好需要的设计源码以及testbench，此处建议将二者分开存在两个文件夹中（我将设计源码存在src，将testbench存在tb文件夹中）。</li><li>准备好VCS的makefile文件，同时给在filelist.f中将设计源码以及testbench给添加进去。注意makefile与filelist.f需要放在同一个文件夹下，filelist.f中插入文件的地址可以是绝对地址也可以是相对地址（相对的是makefile所在的地址）。<em>makefile与 filelist.f 的示例参加附件A。</em></li><li>采用VCS进行编译，对应的命令为make com（事实上这个命令取决于你makefile的书写），建议生成log文件便于进行debug。</li><li>采用VCS进行仿真，对应的命令为make sim（事实上这个命令取决于你makefile的书写），建议生成log文件便于进行debug。</li><li>仿真完成后会生成一个.fsdb的文件，该文件将交由Verdi进行查看</li></ol>]]></content>
+    <content type="html"><![CDATA[<h1 id="一、VCS与Verdi简介"><a href="#一、VCS与Verdi简介" class="headerlink" title="一、VCS与Verdi简介"></a>一、VCS与Verdi简介</h1><p>VCS的全称为Verilog Complie Simulator，是Synopsys公司的电路仿真工具，可用来对电路进行编译与仿真，仿真得到的fsdb文件可被Verdi打开，用于查看仿真得到的波形文件。</p><p>VCS-Verdi联合仿真的优势主要有两点。首先是VCS编译以及仿真电路的速度要远远快于Modelsim等仿真工具，在进行后仿真时可以节省大量时间。其次是VCS仿真得到的fsdb中可以包括电路中所有信号的变化，这样就可以避免在Modelsim中常遇到的重复抓取信号仿真的情况。</p><h1 id="二、VCS的使用流程"><a href="#二、VCS的使用流程" class="headerlink" title="二、VCS的使用流程"></a>二、VCS的使用流程</h1><img src="E:\blog_file\blog_img\VCS-Verdi\VCS工作流程.png" alt="VCS工作流程" style="zoom:80%;" /><p>VCS的工作流程如图1所示。</p><ol><li>准备好需要的设计源码以及testbench，此处建议将二者分开存在两个文件夹中（我将设计源码存在src，将testbench存在tb文件夹中）。</li><li>准备好VCS的makefile文件，同时给在filelist.f中将设计源码以及testbench给添加进去。注意makefile与filelist.f需要放在同一个文件夹下，filelist.f中插入文件的地址可以是绝对地址也可以是相对地址（相对的是makefile所在的地址）。<em>makefile与 filelist.f 的示例参加附件A。</em></li><li>采用VCS进行编译，对应的命令为make com（事实上这个命令取决于你makefile的书写），建议生成log文件便于进行debug。</li><li>采用VCS进行仿真，对应的命令为make sim（事实上这个命令取决于你makefile的书写），建议生成log文件便于进行debug。</li><li>仿真完成后会生成一个.fsdb的文件，该文件将交由Verdi进行查看</li></ol><h1 id="三、Verdi的使用"><a href="#三、Verdi的使用" class="headerlink" title="三、Verdi的使用"></a>三、Verdi的使用</h1><p>Verdi的使用较为简单，采用make verdi的命令即可打开Verdi文件进行仿真，以下对Verdi中的一些常用的快捷键以及会出现的一些错误进行讲解。</p><p><img src="https://mega.nz/file/u3RUnJwQ#J9k7SidFk6oNb2GYI-hFpLlJKgSDc1Qe4BZqV3Fom2I" alt="Test0"></p>]]></content>
     
     
       
