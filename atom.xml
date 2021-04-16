@@ -6,7 +6,7 @@
   <link href="https://nian96.github.io/atom.xml" rel="self"/>
   
   <link href="https://nian96.github.io/"/>
-  <updated>2021-04-16T02:57:32.196Z</updated>
+  <updated>2021-04-16T02:59:19.493Z</updated>
   <id>https://nian96.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://nian96.github.io/2021/04/16/ZYNQ%E7%9A%84PL%E4%B8%8EPS%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF/"/>
     <id>https://nian96.github.io/2021/04/16/ZYNQ%E7%9A%84PL%E4%B8%8EPS%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF/</id>
     <published>2021-04-16T02:39:25.000Z</published>
-    <updated>2021-04-16T02:57:32.196Z</updated>
+    <updated>2021-04-16T02:59:19.493Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="一、Zynq简介"><a href="#一、Zynq简介" class="headerlink" title="一、Zynq简介"></a>一、Zynq简介</h1><p>Zynq是Xilinx公司推出的一系列FPGA，与传统的FPGA相比，Zynq还额外集成了Arm核作为中央处理器。我们可以用C，Python等语言控制Arm核完成任务，同时也可以通过verilog在FPGA上进行硬件设计。Zynq的最大优势在于Arm核与FPGA的协同工作，这就需要Arm核与FPGA之间能够实现高效的通讯。</p><p><img src="https://wx3.sinaimg.cn/mw690/c49426d4ly1gpk8009fagj20sg146h4t.jpg" alt="TestImage"></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="一、Zynq简介"><a href="#一、Zynq简介" class="headerlink" title="一、Zynq简介"></a>一、Zynq简介</h1><p>Zynq是Xilinx公司推出的一系列FPGA，与传统的FPGA相比，Zynq还额外集成了Arm核作为中央处理器。我们可以用C，Python等语言控制Arm核完成任务，同时也可以通过verilog在FPGA上进行硬件设计。Zynq的最大优势在于Arm核与FPGA的协同工作，这就需要Arm核与FPGA之间能够实现高效的通讯。</p>]]></content>
     
     
       
