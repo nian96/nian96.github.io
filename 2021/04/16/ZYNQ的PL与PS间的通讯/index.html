@@ -27,13 +27,19 @@
 <meta property="og:site_name" content="Jilin&#39;s Blog">
 <meta property="og:description" content="一、Zynq简介Zynq是Xilinx公司推出的一系列FPGA，与传统的FPGA相比，Zynq还额外集成了Arm核作为中央处理器。Zynq将Arm核称为PS（Programming System），将FPGA部分称为PL（Programmable Logic）。我们可以用C，Python等语言控制PS端完成任务，同时也可以通过verilog在PL端上进行硬件设计。Zynq的最大优势在于PS与PL端">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4sonrj30l30e50tv.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/mw690/005zJSMQly1gplsz4rscpj30nc0fu74v.jpg">
+<meta property="og:image" content="https://wx1.sinaimg.cn/mw690/005zJSMQly1gplsz4u6egj30nc0fvjrt.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4saa9j30ne0fwwf8.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4tceyj312l0esjs1.jpg">
 <meta property="article:published_time" content="2021-04-16T02:39:25.000Z">
-<meta property="article:modified_time" content="2021-04-16T08:05:49.649Z">
+<meta property="article:modified_time" content="2021-04-16T11:22:45.090Z">
 <meta property="article:author" content="张吉霖">
 <meta property="article:tag" content="Zynq">
 <meta property="article:tag" content="AXI协议">
 <meta property="article:tag" content="FPGA">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4sonrj30l30e50tv.jpg">
 
 <link rel="canonical" href="https://nian96.github.io/2021/04/16/ZYNQ%E7%9A%84PL%E4%B8%8EPS%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF/">
 
@@ -179,7 +185,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-04-16 10:39:25 / 修改时间：16:05:49" itemprop="dateCreated datePublished" datetime="2021-04-16T10:39:25+08:00">2021-04-16</time>
+              <time title="创建时间：2021-04-16 10:39:25 / 修改时间：19:22:45" itemprop="dateCreated datePublished" datetime="2021-04-16T10:39:25+08:00">2021-04-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,7 +208,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="一、Zynq简介"><a href="#一、Zynq简介" class="headerlink" title="一、Zynq简介"></a>一、Zynq简介</h1><p>Zynq是Xilinx公司推出的一系列FPGA，与传统的FPGA相比，Zynq还额外集成了Arm核作为中央处理器。Zynq将Arm核称为PS（<strong>Programming System</strong>），将FPGA部分称为PL（<strong>Programmable</strong> <strong>Logic</strong>）。我们可以用C，Python等语言控制PS端完成任务，同时也可以通过verilog在PL端上进行硬件设计。Zynq的最大优势在于PS与PL端的协同工作，这就需要PS与PL端之间能够实现高效的通讯，本篇博客就是针对二者之间的通讯协议进行介绍。</p>
+        <h1 id="一、Zynq简介"><a href="#一、Zynq简介" class="headerlink" title="一、Zynq简介"></a>一、Zynq简介</h1><p>Zynq是Xilinx公司推出的一系列FPGA，与传统的FPGA相比，Zynq还额外集成了Arm核作为中央处理器。Zynq将Arm核称为PS（<strong>Programming System</strong>），将FPGA部分称为PL（<strong>Programmable</strong> <strong>Logic</strong>）。我们可以用C，Python等语言控制PS端完成任务，同时也可以通过verilog在PL端上进行硬件设计。Zynq的最大优势在于PS与PL端的协同工作，这就需要PS与PL端之间能够实现高效的通讯，本篇博客就是针对二者之间的通讯总线进行介绍。</p>
+<p>我一向秉持着边做边学的理念，并不认为需要对总线协议有着深入了解后再开始在FPGA上实现这些总线，这些协议对初学者而言较为复杂，若在此花费大量时间很容易打击学习的积极性，我在初学时就遇到过这样的问题。因此**<u>本篇博客不对总线的具体协议做出介绍，将集中在如何搭建、使用、修改这些总线来实现我们的设计目标。</u>**</p>
+<p>以下所有操作的基础环境为：Vivado 2019.1，ZCU102 FPGA开发板。</p>
+<h1 id="二、PL与PS间的通讯总线"><a href="#二、PL与PS间的通讯总线" class="headerlink" title="二、PL与PS间的通讯总线"></a>二、PL与PS间的通讯总线</h1><p>Zynq上支持利用AXI总线进行数据的通讯，这个总线可以分为三类：1）AXI-Lite总线；2）AXI-Full总线；3）AXI-Stream总线。但PS与PL之间的接口却只支持前两种，AXI-Stream只能在PL中实现，不能直接和PS相连，必须通过AXI-Lite或AXI4转接，本篇博客暂时只对前两种总线进行介绍。</p>
+<h2 id="AXI-Lite总线"><a href="#AXI-Lite总线" class="headerlink" title="AXI-Lite总线"></a>AXI-Lite总线</h2><p>这是一种简单的地址映射性通讯总线。一般用在小规模的数据交换，例如只配置一次的数据，工作模式的切换。</p>
+<h2 id="1-创建Xilinx提供的AXI-template"><a href="#1-创建Xilinx提供的AXI-template" class="headerlink" title="1. 创建Xilinx提供的AXI template"></a>1. 创建Xilinx提供的AXI template</h2><p>1）在Tools的下拉菜单中选择Create and Package New IP。</p>
+<img src="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4sonrj30l30e50tv.jpg" alt="image-20210416185656721" style="zoom: 80%;">
+
+<p>2）选择Create AXI4 Peripheral，这会引导你创建一个AXI4接口的IP。</p>
+<img src="https://wx3.sinaimg.cn/mw690/005zJSMQly1gplsz4rscpj30nc0fu74v.jpg" alt="image-20210416185812018" style="zoom: 80%;">
+
+<p>3）在Add Interfaces中，将Interface Type选择为Lite，Interface Mode选择为Slave，Number of Registers选择为4（每个Register对应一个地址，因此Register数目对应AXI Lite的数据通道。即Registers数目为4，则可以通过AXI Lite往里面传4个32bit的数）。</p>
+<img src="https://wx1.sinaimg.cn/mw690/005zJSMQly1gplsz4u6egj30nc0fvjrt.jpg" alt="image-20210416190007646" style="zoom: 80%;">
+
+<p>4）在最终的步骤中选择Add IP to the repository，这将把创建出来的IP添加到当前工程的目录中。</p>
+<img src="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4saa9j30ne0fwwf8.jpg" alt="image-20210416191103547" style="zoom:80%;">
+
+<p>5）创建并打开block design。</p>
+<p>6）在block design中添加刚刚生成的IP（由于已经将IP添加到IP目录中了，故可以搜到，若搜不到参考附录A.1）。</p>
+<img src="https://wx2.sinaimg.cn/mw690/005zJSMQly1gplsz4tceyj312l0esjs1.jpg" alt="image-20210416191346554">
+
+<p>7）右键选中IP，选择Edit in IP package，对生成的IP核进行编辑。</p>
+<h2 id="AXI-Full总线"><a href="#AXI-Full总线" class="headerlink" title="AXI-Full总线"></a>AXI-Full总线</h2><p>这是一种面向高性能地址映射通讯的需求，是面向地址映射的接口。一般用在大规模的数据交换，例如传输需要PL处理的视频或图像数据，以及处理后的结果。</p>
 
     </div>
 
@@ -285,7 +313,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81Zynq%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">一、Zynq简介</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81Zynq%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">一、Zynq简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81PL%E4%B8%8EPS%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF%E6%80%BB%E7%BA%BF"><span class="nav-number">2.</span> <span class="nav-text">二、PL与PS间的通讯总线</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AXI-Lite%E6%80%BB%E7%BA%BF"><span class="nav-number">2.1.</span> <span class="nav-text">AXI-Lite总线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BAXilinx%E6%8F%90%E4%BE%9B%E7%9A%84AXI-template"><span class="nav-number">2.2.</span> <span class="nav-text">1. 创建Xilinx提供的AXI template</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AXI-Full%E6%80%BB%E7%BA%BF"><span class="nav-number">2.3.</span> <span class="nav-text">AXI-Full总线</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
