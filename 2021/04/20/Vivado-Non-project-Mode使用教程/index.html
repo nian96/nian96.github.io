@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"nian96.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Vivado的Project和Non-Project模式Vivado的project模式就是我们通常使用的GUI模式，通过操作软件来实现功能。而Non-project模式则是不打开GUI，完全使用tcl控制vivado进行综合、布局、布线、生成bit文件。 Project模式使用方便，直白，会自动的帮我们完成许多的操作，可以方便初学者快速的入门。但是这种便利也带来了不少的限制，使得操作的灵活性大大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vivado Non-project模式使用教程">
+<meta property="og:url" content="https://nian96.github.io/2021/04/20/Vivado-Non-project-Mode%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Jilin&#39;s Blog">
+<meta property="og:description" content="Vivado的Project和Non-Project模式Vivado的project模式就是我们通常使用的GUI模式，通过操作软件来实现功能。而Non-project模式则是不打开GUI，完全使用tcl控制vivado进行综合、布局、布线、生成bit文件。 Project模式使用方便，直白，会自动的帮我们完成许多的操作，可以方便初学者快速的入门。但是这种便利也带来了不少的限制，使得操作的灵活性大大">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-20T06:24:14.000Z">
+<meta property="article:modified_time" content="2021-04-20T06:54:37.908Z">
+<meta property="article:author" content="张吉霖">
+<meta property="article:tag" content="FPGA">
+<meta property="article:tag" content="Vivado">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://nian96.github.io/2021/04/20/Vivado-Non-project-Mode%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vivado Non-project模式使用教程 | Jilin's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Jilin's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jilin's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">知识保存</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nian96.github.io/2021/04/20/Vivado-Non-project-Mode%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张吉霖">
+      <meta itemprop="description" content="记录知识，防止遗忘">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jilin's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vivado Non-project模式使用教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-20 14:24:14 / 修改时间：14:54:37" itemprop="dateCreated datePublished" datetime="2021-04-20T14:24:14+08:00">2021-04-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">工具使用</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Vivado的Project和Non-Project模式"><a href="#Vivado的Project和Non-Project模式" class="headerlink" title="Vivado的Project和Non-Project模式"></a>Vivado的Project和Non-Project模式</h1><p>Vivado的project模式就是我们通常使用的GUI模式，通过操作软件来实现功能。而Non-project模式则是不打开GUI，完全使用tcl控制vivado进行综合、布局、布线、生成bit文件。</p>
+<p>Project模式使用方便，直白，会自动的帮我们完成许多的操作，可以方便初学者快速的入门。但是这种便利也带来了不少的限制，使得操作的灵活性大大下降。</p>
+<p>Non-Project模式则是完全通过 tcl 控制命令窗口的形式，有着最大的灵活性，但是这也使得我们需要对工程的每一步都做出设置，相对Project模式更为繁杂。</p>
+<h1 id="启动命令"><a href="#启动命令" class="headerlink" title="启动命令"></a>启动命令</h1><p>在命令行中输入下述命令则可以启动 vivado 的 non-project 模式，其中的 run.tcl 文件则是控制vivado运行的文件。</p>
+<p><em>注：若无法成功启动，一般是由于环境变量未设置好，需要将…\Vivado\2019.1\bin以及…\Vivado\2019.1\bin\unwrapped\win64.o添加到环境变量中。</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vivado -mode batch -source run.tcl</span><br></pre></td></tr></table></figure>
+
+<p>以下为xilinx给出的 run.tcl 示例。</p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># STEP#0: define output directory area. </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="keyword">set</span> outputDir ./Tutorial_Created_Data/bft_output </span><br><span class="line"><span class="keyword">file</span> mkdir <span class="variable">$outputDir</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># STEP#1: setup design sources and constraints </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">read_vhdl -library bftLib [ <span class="keyword">glob</span> ./Sources/hdl/bftLib/*.vhdl ] </span><br><span class="line">read_vhdl ./Sources/hdl/bft.vhdl </span><br><span class="line">read_verilog [ <span class="keyword">glob</span> ./Sources/hdl/*.v ] </span><br><span class="line">read_xdc ./Sources/bft_full_kintex7.xdc </span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># STEP#2: run synthesis, report utilization and timing estimates, write checkpoint design </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">synth_design -top bft -part xc7k70tfbg484<span class="number">-2</span> </span><br><span class="line">write_checkpoint -force <span class="variable">$outputDir</span>/post_synth </span><br><span class="line">report_timing_summary -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_synth_timing_summary.rpt </span><br><span class="line">report_power -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_synth_power.rpt </span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># STEP#3: run placement and logic optimzation, report utilization and timing estimates, write checkpoint design </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">opt_design </span><br><span class="line">place_design </span><br><span class="line">phys_opt_design </span><br><span class="line">write_checkpoint -force <span class="variable">$outputDir</span>/post_place </span><br><span class="line">report_timing_summary -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_place_timing_summary.rpt </span><br><span class="line"></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># STEP#4: run router, report actual utilization and timing, write checkpoint design, run drc, write verilog and xdc out </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">route_design </span><br><span class="line">write_checkpoint -force <span class="variable">$outputDir</span>/post_route </span><br><span class="line">report_timing_summary -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_route_timing_summary.rpt </span><br><span class="line">report_timing -sort_by group -max_paths <span class="number">100</span> -path_type summary -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_route_timing.rpt </span><br><span class="line">report_clock_utilization -<span class="keyword">file</span> <span class="variable">$outputDir</span>/clock_util.rpt </span><br><span class="line">report_utilization -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_route_util.rpt </span><br><span class="line">report_power -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_route_power.rpt </span><br><span class="line">report_drc -<span class="keyword">file</span> <span class="variable">$outputDir</span>/post_imp_drc.rpt </span><br><span class="line">write_verilog -force <span class="variable">$outputDir</span>/bft_impl_netlist.v </span><br><span class="line">write_xdc -no_fixed_only -force <span class="variable">$outputDir</span>/bft_impl.xdc </span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># STEP#5: generate a bitstream </span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">write_bitstream -force <span class="variable">$outputDir</span>/bft.bit Design</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p>参考文献 [1] 中有着关于Non-Project的各个步骤的完整描述，文献 [2] 中有着vivado的所有tcl命令以及解释，在编写run.tcl时可以进行参考。</p>
+<p>[1] Vivado Design Suite User Guide–Design Flows Overview (UG892)</p>
+<p>[2] Vivado Design Suite Tcl Command Reference Guide (UG835)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FPGA/" rel="tag"># FPGA</a>
+              <a href="/tags/Vivado/" rel="tag"># Vivado</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/17/eRBP%E7%AE%97%E6%B3%95%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" rel="prev" title="eRBP算法阅读笔记">
+      <i class="fa fa-chevron-left"></i> eRBP算法阅读笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vivado%E7%9A%84Project%E5%92%8CNon-Project%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">Vivado的Project和Non-Project模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">启动命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张吉霖</p>
+  <div class="site-description" itemprop="description">记录知识，防止遗忘</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张吉霖</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
